@@ -13,7 +13,7 @@ la pieza que hay guardada
 
 from PIL import Image
 import numpy as np
-
+import piezas
 
 
 class Tablero:
@@ -44,7 +44,8 @@ class Tablero:
 
                 
         # Create a 10x18 matrix filled with zeros
-        self.board = np.zeros((18, 10))
+        self.board = np.zeros((19, 10))
+
 
     def update_grid(self):
         
@@ -76,7 +77,7 @@ class Tablero:
         height_diff = down/20 
         right_diff = right/10
 
-        for i in range(0,18):
+        for i in range(0,19):
             for j in range(10):
                 cubo = self.full_board.crop((left+(j*right_diff), up+((i+1)*height_diff), left+((j+1)*right_diff), up+((i+2)*height_diff)))
                 width, height = cubo.size
@@ -160,9 +161,31 @@ class Tablero:
             classified_color = 'I'
 
         return classified_color
+
+    def update_piece(self):
+
+        screenshot = Image.open("tetris.png")
+        resized_width = 800  # Adjust width as needed
+        resized_height = 600  # Adjust height as needed
+
+        resized_image = screenshot.resize((resized_width, resized_height))
+        # Desired crop width and height
         
-        
-    def get_piece(self):
+        left = 270
+        up = 84
+        right = 540
+        low = 480
+        tetris_completo = resized_image.crop((left, up, right, low))
+
+        #tetris_completo.show()
+        width, height = tetris_completo.size
+        left = 0
+        right=width
+        up = 0
+        low = height
+        # CROP(LEFT, UPPER, RIGHT, LOWER)
+        self.next_piece = tetris_completo.crop((right-68,up+15,right,low-85))
+
         aux_pieces = self.next_piece
         width, height = self.next_piece.size
         left = 0
@@ -171,20 +194,24 @@ class Tablero:
         low = height
         
         add = low/5
-        aux_pieces.show()
+        #aux_pieces.show()
 
 
         pieces = []
 
         for i in range(5):
             piece = self.next_piece.crop((left, up+(i*add), right, up+((i+1)*add)))
-            pieces.append(self.get_color(piece))
+            color = self.get_color(piece)
+            if color == None:
+                color = "I"
+            #print(color)
+            pieza = piezas.orientacion_pieza(piece, color)
+            pieces.append(pieza)
+            #print(pieza)
 
 
-        #p1 = self.next_piece.crop((left, up, right, up+add))
-        #p1.show()
         
-        return pieces 
+        return pieces
         
     def get_hold(self):
         aux_hold = self.hold_piece
@@ -197,6 +224,5 @@ class Tablero:
 
 
 tablero = Tablero()
-print(tablero.get_piece())
 
-
+tablero.update_piece()

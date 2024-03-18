@@ -58,13 +58,15 @@ class Jugador:
             EC.element_to_be_clickable((By.ID, "start_40l"))
         )
         start_button.click()
-        time.sleep(8)
+        time.sleep(6)
         self.driver.save_screenshot("tetris.png")
+        time.sleep(4)
 
-    def analizar(self, piezas, tablero, holding):
-        print(piezas)
+    def analizar(self, piezas, tablero, pieza_actual):
+        
         print(tablero)
-        os.remove('tetris.png')
+        print(piezas)
+        print(pieza_actual)
         self.izquierda()
         self.izquierda()
         self.enviar()

@@ -5,12 +5,18 @@ def main():
     jugador = jugador_clase.Jugador()
     jugador.start_game()
     tablero = procesamiento.Tablero()
-    piezas = tablero.get_piece()
+    piezas = tablero.update_piece()
+    pieza_actual = piezas[0]
     grid = tablero.update_grid()
     #holding = tablero.get_hold()
-    jugador.analizar(piezas, tablero, "x")
-    tablero.update_grid()
+    jugador.analizar(piezas, grid, pieza_actual)
 
+    #Así se ve un ciclo de jugar una ficha
+    pieza_actual = piezas[1]
+    piezas = tablero.update_piece()
+    grid = tablero.update_grid()
+    jugador.analizar(piezas, grid, pieza_actual)
+    
 
 
 if __name__ == "__main__":
