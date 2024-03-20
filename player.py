@@ -13,13 +13,14 @@ import tetris
 class bot:
 
     def __init__(self):
+        self.movimiento = 0
         self.orientation_columns = {
             "I": [4,6],
             "T": [4, 5, 4, 4],
-            "O": [5],
+            "O": [5], #puede ser 3,
             "L": [4, 5, 4, 4],
             "S": [4, 5],
-            "J": [4, 5,4,4],
+            "J": [4,5,4,4],
             "Z": [4,5],
         }
 
@@ -36,7 +37,7 @@ class bot:
 
         self.current_pieces = None
         self.current_pieces = []
-        self.currentColumn = 4
+        self.currentColumn = 5
         self.ai = tetris.AI(10, 20)
         self.moves = 0
         self.driver = webdriver.Firefox()
@@ -174,19 +175,19 @@ class bot:
     
 
     def izquierda(self):
-        time.sleep(1)
+        time.sleep(0.2)
         actions = ActionChains(self.driver)
         actions.send_keys(Keys.ARROW_LEFT).perform()
         print("Movido a la izquierda")
 
     def derecha(self):
-        time.sleep(1)
+        time.sleep(0.2)
         actions = ActionChains(self.driver)
         actions.send_keys(Keys.ARROW_RIGHT).perform()
         print("Movido a la derecha")
 
     def enviar(self):
-        time.sleep(1)
+        time.sleep(0.2)
         actions = ActionChains(self.driver)
         actions.send_keys(Keys.SPACE).perform()
         print("enviado")
@@ -198,24 +199,20 @@ class bot:
 
     
     def rotar(self, orientacion):
-        time.sleep(1)
+        time.sleep(0.2)
+        print("Mi orientacion: ",orientacion)
         actions = ActionChains(self.driver)
         for i in range(orientacion):
             actions.send_keys(Keys.UP).perform()
         
         print("rotar" + str(orientacion))
-        print("BUG")
-        print("orientation columns")
-        print(self.orientation_columns)
-        print("orientacion")
-        print(orientacion)
-        print("current_piece")
-        print(self.current_piece)
         self.currentColumn = self.orientation_columns[self.current_piece][orientacion]
 
 
     def moveColumn(self, column):
-        deltaColumns = column - self.currentColumn
+        print("mi columna", self.current_column)
+        print("columna objetivo", column)
+        deltaColumns = column - self.currentColumn+1
 
         if (deltaColumns<0):
             for i in range(abs(deltaColumns)):
@@ -259,9 +256,12 @@ class bot:
         aux_dict = self.ai.pickMove(
             self.pieces_indexes[self.current_piece])
         
+        
         orientationIndex = aux_dict["orientationIndex"]
         orientation = aux_dict["orientation"]
         column = aux_dict["column"]
+        print("index de orientacion: ", orientationIndex)
+        print("orientacion", orientation)
         # Play the move on the board
         self.ai.play_move(self.ai.board, orientation, column)
 
@@ -276,6 +276,7 @@ class bot:
         self.moveColumn(column)
         self.get_next_piece()
         self.enviar()
+        self.moves +=1
 
         # Take screenshot (optional)
         # if ... (implement screenshot logic using an external library)
